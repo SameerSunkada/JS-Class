@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced JavaScript for QA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .slide {
+            display: none;
+            min-height: 80vh;
+            padding-bottom: 5rem; /* Add padding to prevent content from touching the bottom */
+        }
+        .slide.active {
+            display: block;
+        }
+        pre {
+            background-color: #1f2937;
+            color: #d1d5db;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .code-title {
+            background-color: #374151;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+            margin-bottom: -1rem;
+            font-weight: bold;
+        }
+        ul {
+            padding-left: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.75rem;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 md:p-8">
+
+    <div class="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-6 md:p-10">
+
+        <!-- Slides Container -->
+        <div id="slides-container" class="relative">
+
+            <!-- Slide 1: Welcome -->
+            <div class="slide active">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 1 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">Welcome</h2>
+                <h3 class="text-3xl font-semibold mb-6">Advanced JavaScript for Quality Analysts</h3>
+                <p class="text-lg mb-4">Welcome to this advanced training, designed to elevate your test automation skills. We'll move beyond simple scripts and explore the architecture, patterns, and tools needed to build robust, scalable frameworks.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Audience:</b> Experienced QA professionals looking to deepen their technical knowledge.</li>
+                    <li><b>Objective:</b> Equip you with the skills to design and lead the development of your team's test automation framework.</li>
+                    <li><b>Goal:</b> Empower you to make informed architectural decisions and write more efficient code.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 2: Course Goals -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 2 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">Course Goals & Objectives</h2>
+                <h3 class="text-3xl font-semibold mb-6">What You Will Master</h3>
+                <p class="text-lg mb-4">This course is structured to help you master the key skills that differentiate an expert from a novice. We'll focus on the following core areas:</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Advanced OOPS:</b> Move beyond Page Object Model to sophisticated design patterns like the <b>Factory</b> and <b>Singleton</b> patterns.</li>
+                    <li><b>Deep Asynchronicity:</b> Fully understand the <b>Event Loop</b>, Promises, and `async/await` to write more reliable tests.</li>
+                    <li><b>Framework Design:</b> Learn how to build modular, reusable frameworks using modern design principles and module systems.</li>
+                    <li><b>Professional Debugging:</b> Master advanced techniques like <b>conditional breakpoints</b> and professional logging.</li>
+                    <li><b>CI/CD Integration:</b> Learn how to prepare your tests for <b>Continuous Integration/Delivery</b> environments.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 3: OOPS - Understanding the 'this' Keyword -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 3 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">OOPS - Understanding `this`</h2>
+                <h3 class="text-3xl font-semibold mb-6">The Dynamic Nature of `this`</h3>
+                <p class="text-lg mb-4">The `this` keyword is a cornerstone of JavaScript OOP. Its value is not fixed; it depends entirely on <b>how the function is called</b>. Understanding this dynamic behavior is critical for building reliable classes and methods.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Dynamic Context:</b> The value of `this` changes based on the function's execution context.</li>
+                    <li><b>Global Context:</b> When used outside a function, `this` refers to the global object (`window` in browsers, `global` in Node.js).</li>
+                    <li><b>Function Context:</b> In a regular function call, `this` also refers to the global object (or `undefined` in strict mode).</li>
+                </ul>
+                <div class="code-title">Code: `this` in Global Context</div>
+                <pre><code>
+// In a browser, `this` refers to the `window` object
+console.log(this === window); // Output: true
+
+function showThis() {
+    "use strict"; // Enable strict mode for this example
+    console.log(this); // Output: undefined
+}
+showThis();
+                </code></pre>
+            </div>
+
+            <!-- Slide 4: OOPS - `this` in Objects and Classes -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 4 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">OOPS - `this` in Objects and Classes</h2>
+                <h3 class="text-3xl font-semibold mb-6">Context is Key</h3>
+                <p class="text-lg mb-4">In a test framework, you will most often encounter `this` within objects and classes. These are the most common contexts for organizing your code into reusable components like Page Object Models.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Object Method Context:</b> When a function is called as a method of an object (`myObject.myMethod()`), `this` refers to that specific object.</li>
+                    <li><b>Constructor Context:</b> When a function is used as a constructor with the `new` keyword (`new MyClass()`), `this` refers to the newly created instance of the class.</li>
+                </ul>
+                <div class="code-title">Code: `this` in an Object and Class</div>
+                <pre><code>
+// 1. Object Method Context
+const pageObject = {
+  selector: '#username',
+  getSelector: function() {
+    return this.selector; // `this` refers to `pageObject`
+  }
+};
+console.log(pageObject.getSelector()); // Output: #username
+
+// 2. Class Constructor Context
+class LoginPage {
+  constructor() {
+    this.url = 'https://example.com/login';
+  }
+}
+const loginPage = new LoginPage();
+console.log(loginPage.url); // Output: https://example.com/login
+                </code></pre>
+            </div>
+
+            <!-- Slide 5: OOPS - Binding `this` -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 5 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">OOPS - Binding `this`</h2>
+                <h3 class="text-3xl font-semibold mb-6">Controlling Context with `bind()`</h3>
+                <p class="text-lg mb-4">Sometimes you need to explicitly control the value of `this`. The `.bind()` method is a powerful tool for this, allowing you to create a new function with a fixed `this` value, regardless of how it is later called. This is crucial for callbacks in test automation.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Explicit Binding:</b> `bind()` creates a new function with a `this` value bound to the object you provide.</li>
+                    <li><b>Callback Functions:</b> It's essential for passing an object's method as a callback, ensuring the method still has access to the object's properties.</li>
+                    <li><b>Arrow Functions:</b> Arrow functions do not have their own `this`; they inherit it from their parent scope. This makes them predictable and often a good choice for callbacks.</li>
+                </ul>
+                <div class="code-title">Code: Using `.bind()`</div>
+                <pre><code>
+const pageObject = {
+  selector: '#username',
+  getSelector: function() {
+    return this.selector;
+  }
+};
+
+// We create a new function where `this` is permanently bound to `pageObject`
+const getSelectorMethod = pageObject.getSelector.bind(pageObject);
+console.log(getSelectorMethod()); // Output: #username
+                </code></pre>
+            </div>
+
+            <!-- Slide 6: OOPS - Static Methods & Properties -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 6 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">OOPS - Static Methods & Properties</h2>
+                <h3 class="text-3xl font-semibold mb-6">Creating a Shared Toolbox</h3>
+                <p class="text-lg mb-4">Static methods and properties are associated with the <b>class itself</b>, not with any specific instance. This means you can call them directly on the class without creating an object. They are perfect for creating shared utility functions.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Utility Functions:</b> Static methods are ideal for helper functions that don't depend on an object's state (e.g., generating random data).</li>
+                    <li><b>Centralized Constants:</b> Static properties are great for storing class-wide constants, like a base URL or a timeout value.</li>
+                </ul>
+                <div class="code-title">Code: A `TestUtils` Class with Static Methods</div>
+                <pre><code>
+class TestUtils {
+  // Static property for a common constant
+  static BASE_URL = 'https://api.example.com';
+
+  // Static method to generate unique data
+  static generateRandomEmail() {
+    const randomString = Math.random().toString(36).substring(2, 8);
+    return `user_${randomString}@test.com`;
+  }
+}
+
+// You don't need to create an instance of TestUtils
+console.log(TestUtils.generateRandomEmail());
+console.log(TestUtils.BASE_URL);
+                </code></pre>
+            </div>
+
+            <!-- Slide 7: Design Patterns - The Factory Pattern -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 7 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">Design Patterns - The Factory Pattern</h2>
+                <h3 class="text-3xl font-semibold mb-6">Dynamically Creating Objects</h3>
+                <p class="text-lg mb-4">The <b>Factory Pattern</b> is a creational design pattern that provides an interface for creating objects, but allows the factory to decide which object to create. In QA, this is perfect for managing different types of test data or page objects.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Encapsulate Creation:</b> A factory function or method handles the logic of creating different objects.</li>
+                    <li><b>QA Use Case:</b> A `TestDataFactory` can create different user types (`AdminUser`, `StandardUser`) based on a single input parameter.</li>
+                    <li><b>Benefits:</b> Keeps your test scripts clean and focused on the behavior, not the data creation logic.</li>
+                </ul>
+                <div class="code-title">Code: A `UserFactory` for Test Data</div>
+                <pre><code>
+class StandardUser { constructor() { this.role = 'standard'; } }
+class AdminUser { constructor() { this.role = 'admin'; } }
+
+class UserFactory {
+    static createUser(role) {
+        if (role === 'admin') return new AdminUser();
+        if (role === 'standard') return new StandardUser();
+        throw new Error('Invalid user role.');
+    }
+}
+
+// In your test script:
+const admin = UserFactory.createUser('admin');
+console.log(admin.role); // Output: admin
+                </code></pre>
+            </div>
+
+            <!-- Slide 8: Design Patterns - The Singleton Pattern -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 8 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">Design Patterns - The Singleton Pattern</h2>
+                <h3 class="text-3xl font-semibold mb-6">Ensuring a Single Instance</h3>
+                <p class="text-lg mb-4">The <b>Singleton Pattern</b> restricts a class to having only a single instance. This is highly useful for managing resources that should be globally shared and accessed by all tests, such as a browser driver or a database connection.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Single Instance:</b> Guarantees that only one object of a class can ever be created.</li>
+                    <li><b>QA Use Case:</b> A `BrowserManager` Singleton can ensure all tests share the same browser instance, preventing multiple browsers from being launched and saving resources.</li>
+                    <li><b>Benefits:</b> Saves memory and provides a global point of access to a critical resource.</li>
+                </ul>
+                <div class="code-title">Code: A `BrowserManager` Singleton</div>
+                <pre><code>
+class BrowserManager {
+  static instance;
+
+  constructor() {
+    if (BrowserManager.instance) {
+      return BrowserManager.instance;
+    }
+    this.browserDriver = "Playwright Browser Instance";
+    BrowserManager.instance = this;
+  }
+}
+
+// No matter how many times you call `new`, you get the same instance.
+const manager1 = new BrowserManager();
+const manager2 = new BrowserManager();
+
+console.log(manager1 === manager2); // Output: true
+                </code></pre>
+            </div>
+
+            <!-- Slide 9: Async JavaScript - The Event Loop -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 9 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">Async JavaScript - The Event Loop</h2>
+                <h3 class="text-3xl font-semibold mb-6">The Heart of Asynchronicity</h3>
+                <p class="text-lg mb-4">To write reliable tests, you must understand how JavaScript handles asynchronicity. The <b>Event Loop</b> is the constant process that allows JavaScript to perform non-blocking operations despite being single-threaded. It's the core reason why tests might be flaky if not properly synchronized.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Single-threaded:</b> JavaScript can only execute one task at a time.</li>
+                    <li><b>The Call Stack:</b> This is where your synchronous code is executed.</li>
+                    <li><b>The Event Loop's Job:</b> The Event Loop continuously checks if the Call Stack is empty. If it is, it looks for pending tasks and pushes them onto the Call Stack.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 10: Async JavaScript - Microtasks & Macrotasks -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 10 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">Async - Microtasks vs. Macrotasks</h2>
+                <h3 class="text-3xl font-semibold mb-6">Execution Order is Everything</h3>
+                <p class="text-lg mb-4">Asynchronous tasks are not all created equal. They are handled by different queues, and understanding their priority is key to preventing race conditions and test flakiness.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Microtask Queue:</b> This queue has a <b>higher priority</b> and is processed immediately after the Call Stack is empty. It handles tasks like resolved Promises (`.then()` blocks).</li>
+                    <li><b>Macrotask Queue:</b> This queue has a <b>lower priority</b>. It handles tasks like `setTimeout()` and I/O operations. The Event Loop only processes one macrotask per full loop cycle.</li>
+                    <li><b>Relevance to QA:</b> A flaky test often fails because a microtask or macrotask was not correctly awaited.</li>
+                </ul>
+                <div class="code-title">Code: Microtask vs. Macrotask</div>
+                <pre><code>
+console.log('1. Start');
+
+setTimeout(() => {
+  console.log('3. Macrotask (setTimeout)');
+}, 0);
+
+Promise.resolve().then(() => {
+  console.log('2. Microtask (Promise)');
+});
+
+console.log('4. End');
+
+// Expected Output:
+// 1. Start -> 4. End -> 2. Microtask -> 3. Macrotask
+                </code></pre>
+            </div>
+
+            <!-- Slide 11: Async JavaScript - `Promise.all()` -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 11 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">Async - `Promise.all()`</h2>
+                <h3 class="text-3xl font-semibold mb-6">Running Tasks in Parallel</h3>
+                <p class="text-lg mb-4">In a professional framework, you need to perform multiple asynchronous actions in parallel to save time. `Promise.all()` is the perfect tool for this. It takes an array of promises and returns a single promise.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Resolves All:</b> The returned promise resolves only when <b>all of the input promises have resolved successfully</b>.</li>
+                    <li><b>Rejects First:</b> The returned promise rejects as soon as any single input promise rejects.</li>
+                    <li><b>QA Use Case:</b> Use `Promise.all()` to validate the state of multiple page elements at once or to fetch test data from several API endpoints simultaneously.</li>
+                </ul>
+                <div class="code-title">Code: Using `Promise.all()` for Parallel API Calls</div>
+                <pre><code>
+async function fetchUser(id) {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
+    return response.json();
+}
+
+async function runParallelFetches() {
+    const promises = [fetchUser(1), fetchUser(2)];
+    try {
+        const users = await Promise.all(promises);
+        console.log("All users fetched:", users.map(u => u.name));
+    } catch (error) {
+        console.error("A fetch failed:", error);
+    }
+}
+
+runParallelFetches();
+                </code></pre>
+            </div>
+
+            <!-- Slide 12: API Testing with `fetch` -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 12 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">API Testing with `fetch`</h2>
+                <h3 class="text-3xl font-semibold mb-6">The Native Browser API</h3>
+                <p class="text-lg mb-4">Validating backend APIs directly is faster, more stable, and provides earlier feedback than UI tests. The `fetch` API is the native, built-in way to make HTTP requests in JavaScript, perfect for modern, minimalist code.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Promise-based:</b> It returns a Promise, which integrates perfectly with `async/await`.</li>
+                    <li><b>Manual Error Handling:</b> `fetch` does not throw an error for non-200 responses (e.g., 404 Not Found), so you must check the `response.ok` property yourself.</li>
+                </ul>
+                <div class="code-title">Code: Making an API Call with `fetch`</div>
+                <pre><code>
+async function getUserData(userId) {
+  try {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`);
+    if (!response.ok) {
+      throw new Error(`API returned status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to fetch user data:', error);
+    return null;
+  }
+}
+                </code></pre>
+            </div>
+
+            <!-- Slide 13: API Testing with `axios` -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 13 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">API Testing with `axios`</h2>
+                <h3 class="text-3xl font-semibold mb-6">A Powerful Third-Party Library</h3>
+                <p class="text-lg mb-4">While `fetch` is great, `axios` is a popular third-party library that simplifies the process. It's often preferred in Node.js environments for its streamlined error handling and robust feature set, like interceptors.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Automatic Error Handling:</b> `axios` automatically rejects the promise for any non-2xx status code. This simplifies error-handling with `try/catch`.</li>
+                    <li><b>Interceptors:</b> Allows you to intercept requests and responses globally, perfect for adding authentication tokens.</li>
+                </ul>
+                <div class="code-title">Code: Making an API Call with `axios`</div>
+                <pre><code>
+// Assumes axios is installed
+// import axios from 'axios';
+async function getUserData(userId) {
+  try {
+    const response = await axios.get(`https://jsonplaceholder.typicode.com/users/${userId}`);
+    return response.data; // Axios returns the data directly
+  } catch (error) {
+    console.error('Failed to fetch user data:', error.message);
+    return null;
+  }
+}
+                </code></pre>
+            </div>
+
+            <!-- Slide 14: Module Systems - CommonJS vs. ESM -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 14 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">Module Systems</h2>
+                <h3 class="text-3xl font-semibold mb-6">CommonJS vs. ES Modules</h3>
+                <p class="text-lg mb-4">As your framework grows, you need to organize code into reusable modules. JavaScript has two main systems. Understanding the difference is crucial for project setup.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>CommonJS:</b> The original Node.js system. It uses `require()` and `module.exports`.</li>
+                    <li><b>ES Modules (ESM):</b> The official, modern standard. It uses `import` and `export`. Most modern testing frameworks use ESM.</li>
+                </ul>
+                <div class="code-title">Code: ES Module Example</div>
+                <pre><code>
+// File: `utilities.js`
+export const generateRandomString = (length = 10) => { /* ... */ };
+
+// File: `test.js`
+import { generateRandomString } from './utilities.js';
+const randomName = generateRandomString(8);
+                </code></pre>
+            </div>
+
+            <!-- Slide 15: Test Data Management - Part 1 -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 15 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">Test Data Management - Part 1</h2>
+                <h3 class="text-3xl font-semibold mb-6">Fixtures and Environment Variables</h3>
+                <p class="text-lg mb-4">An advanced framework requires a sophisticated approach to test data. Poor data management leads to flaky tests and maintenance headaches. We'll explore two key strategies.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Fixtures:</b> A fixture provides a known, reliable state for a test. In Playwright, a custom fixture can create test data (e.g., a new user) before a test runs and tears it down afterward, ensuring test isolation.</li>
+                    <li><b>Environment Variables:</b> Store configuration data like API keys, base URLs, and credentials in a `.env` file. This is a secure and flexible practice that allows you to run the same test suite against different environments (dev, staging, etc.).</li>
+                </ul>
+            </div>
+
+            <!-- Slide 16: Test Data Management - Part 2 -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 16 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">Test Data Management - Part 2</h2>
+                <h3 class="text-3xl font-semibold mb-6">Factories and Database Integration</h3>
+                <p class="text-lg mb-4">For truly scalable frameworks, you need to be able to create and manage dynamic test data programmatically.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Test Data Factories:</b> Building on the Factory Pattern, a data factory can programmatically generate realistic, unique test data on demand. This is essential for preventing data collisions in parallel test runs.</li>
+                    <li><b>Database Integration:</b> For complex applications, your tests may need to interact with a test database directly to set up or verify data. This is typically done for non-UI tests, such as checking if a record was correctly created after a form submission.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 17: Professional Logging & Assertions -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 17 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">Professional Logging</h2>
+                <h3 class="text-3xl font-semibold mb-6">Making Failures Informative</h3>
+                <p class="text-lg mb-4">A senior QA professional knows that tests will fail. The key is to make failures informative. A robust logging and assertion strategy is the difference between a flaky, confusing test suite and one that provides clear, actionable feedback.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>`try...catch` Blocks:</b> Use these to gracefully handle expected failures without crashing the entire test.</li>
+                    <li><b>Custom Logger Class:</b> Create a simple `Logger` class with methods like `info()`, `warn()`, and `error()` to centralize your logging logic.</li>
+                    <li><b>Descriptive Assertions:</b> Always provide a clear message in your assertions. Instead of `expect(price).toBe(100)`, use `expect(price).toBe(100, 'Price should be 100 on the checkout page')`.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 18: Advanced Debugging -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 18 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">Advanced Debugging</h2>
+                <h3 class="text-3xl font-semibold mb-6">Isolating Issues with Precision</h3>
+                <p class="text-lg mb-4">You've used basic breakpoints to pause your code, but what if a bug only occurs on the 100th iteration of a loop? A <b>conditional breakpoint</b> is a powerful tool that allows you to pause execution only when a specific JavaScript expression evaluates to `true`.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>How it Works:</b> In a debugger, you set a breakpoint and add a condition (e.g., `i === 100`). The debugger will only stop at that line if the condition is met.</li>
+                    <li><b>QA Use Case:</b> Debug a data-driven test only when the test data is for a specific user ID (`userData.id === 5`) to see why that particular user is failing.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 19: CI/CD Integration - Part 1 -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 19 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">CI/CD Integration - Part 1</h2>
+                <h3 class="text-3xl font-semibold mb-6">Runners and Commands</h3>
+                <p class="text-lg mb-4">A test automation framework is only truly valuable when it is integrated into a <b>Continuous Integration/Continuous Delivery (CI/CD)</b> pipeline. This means your tests run automatically whenever code is pushed to the repository.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>CI/CD Runners:</b> Tools like GitHub Actions, Jenkins, or GitLab CI provide a virtual machine environment to run your test suite.</li>
+                    <li><b>The `test` Command:</b> Your pipeline will typically use a simple command (e.g., `npm run test` or `npx playwright test`) to trigger the test run.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 20: CI/CD Integration - Part 2 -->
+            <div class="slide">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 20 of 20</p>
+                <h2 class="text-4xl font-bold mb-4 text-blue-600">CI/CD Integration - Part 2</h2>
+                <h3 class="text-3xl font-semibold mb-6">Reporting and Headless Execution</h3>
+                <p class="text-lg mb-4">The final steps in a CI/CD pipeline are crucial for providing value back to the team. You need a way to see the results and ensure the tests run efficiently.</p>
+                <ul class="list-disc text-lg space-y-4">
+                    <li><b>Reporting:</b> Configure your test runner to output a human-readable report (e.g., an HTML report). This provides a clear overview of test pass/fail status and helps pinpoint failures.</li>
+                    <li><b>Headless Execution:</b> For CI/CD, tests should always run in headless mode. This means the browser runs in the background without a visible UI, which is faster and requires fewer resources.</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Navigation Controls -->
+        <div class="flex justify-between mt-8">
+            <button id="prev-btn" class="bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-full shadow-lg hover:bg-gray-400 transition-colors disabled:opacity-50" disabled>
+                Previous
+            </button>
+            <button id="next-btn" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow-lg hover:bg-blue-700 transition-colors">
+                Next
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            let currentSlideIndex = 0;
+
+            const showSlide = (index) => {
+                slides.forEach((slide, i) => {
+                    slide.classList.toggle('active', i === index);
+                });
+
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === slides.length - 1;
+            };
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSlideIndex < slides.length - 1) {
+                    currentSlideIndex++;
+                    showSlide(currentSlideIndex);
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentSlideIndex > 0) {
+                    currentSlideIndex--;
+                    showSlide(currentSlideIndex);
+                }
+            });
+
+            showSlide(currentSlideIndex);
+        });
+    </script>
+</body>
+</html>
