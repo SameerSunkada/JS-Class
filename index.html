@@ -13,11 +13,15 @@
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
             color: #1f2937;
+            /* Use flexbox to manage the layout of the sidebar and main content */
+            display: flex;
+            overflow-x: hidden;
+            min-height: 100vh;
         }
         .slide {
             display: none;
-            min-height: 80vh;
-            padding-bottom: 5rem; /* Add padding to prevent content from touching the bottom */
+            /* Removed min-height here, flexbox now handles vertical alignment */
+            padding-bottom: 5rem;
         }
         .slide.active {
             display: block;
@@ -46,18 +50,129 @@
         li {
             margin-bottom: 0.75rem;
         }
+        /* Sidebar styles */
+        .sidebar {
+            width: 0;
+            overflow-x: hidden;
+            background-color: #1f2937;
+            color: #f9fafb;
+            flex-shrink: 0; /* Prevents the sidebar from shrinking below its content size */
+            transition: width 0.3s ease-in-out;
+            padding: 2rem 0; /* Initial padding is zero */
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: 50;
+        }
+        .sidebar.open {
+            width: 280px;
+            padding: 2rem 1rem;
+        }
+        .sidebar a {
+            display: block;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            color: #d1d5db;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .sidebar a:hover {
+            background-color: #374151;
+            color: #f9fafb;
+        }
+        .sidebar a.active-link {
+            background-color: #374151;
+            color: #ffffff;
+            font-weight: bold;
+        }
+        /* Toggle button is now inside the sidebar's content */
+        .toggle-btn-close {
+            background-color: #4b5563;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Styles for the hamburger icon when the sidebar is closed */
+        .hamburger-icon {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 60;
+            background-color: #4b5563;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: left 0.3s ease-in-out;
+        }
+
+        /* Main content styles - updated to use flexbox for vertical centering */
+        .main-content {
+            flex-grow: 1;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center content vertically */
+            align-items: center; /* Center content horizontally */
+            width: 100%;
+        }
+
+        /* Hide the hamburger button when the sidebar is open */
+        .sidebar.open + .hamburger-icon {
+            display: none;
+        }
+
+        .sidebar.open .toggle-btn-close {
+            display: block;
+            margin-left: auto;
+            margin-right: 0;
+        }
+
+        #slides-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1; /* Allow the slide container to fill the available space */
+        }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4 md:p-8">
+<body class="flex flex-col min-h-screen">
 
-    <div class="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-6 md:p-10">
+    <!-- Side Navigation Bar -->
+    <nav id="sidebar" class="sidebar">
+        <!-- Toggle Button for Sidebar - inside the sidebar content for a cohesive unit -->
+        <button id="toggle-sidebar-btn" class="toggle-btn-close">
+            X
+        </button>
+        <h3 class="text-xl font-bold mb-4">Course Content</h3>
+        <ul id="sidebar-nav-list">
+            <!-- Navigation links will be populated dynamically -->
+        </ul>
+    </nav>
+
+    <!-- Hamburger icon for when the sidebar is closed -->
+    <button id="hamburger-icon" class="hamburger-icon">
+        ☰
+    </button>
+
+
+    <!-- Main Content Area -->
+    <div id="main-content" class="main-content w-full max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-6 md:p-10 my-8">
 
         <!-- Slides Container -->
         <div id="slides-container" class="relative">
 
             <!-- Slide 1: Welcome -->
-            <div class="slide active">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 1 of 20</p>
+            <div class="slide active" data-title="Welcome">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 1 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">Welcome</h2>
                 <h3 class="text-3xl font-semibold mb-6">Advanced JavaScript for Quality Analysts</h3>
                 <p class="text-lg mb-4">Welcome to this advanced training, designed to elevate your test automation skills. We'll move beyond simple scripts and explore the architecture, patterns, and tools needed to build robust, scalable frameworks.</p>
@@ -69,8 +184,8 @@
             </div>
 
             <!-- Slide 2: Course Goals -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 2 of 20</p>
+            <div class="slide" data-title="Course Goals">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 2 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">Course Goals & Objectives</h2>
                 <h3 class="text-3xl font-semibold mb-6">What You Will Master</h3>
                 <p class="text-lg mb-4">This course is structured to help you master the key skills that differentiate an expert from a novice. We'll focus on the following core areas:</p>
@@ -84,8 +199,8 @@
             </div>
 
             <!-- Slide 3: OOPS - Understanding the 'this' Keyword -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 3 of 20</p>
+            <div class="slide" data-title="OOPS - `this` Keyword">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 3 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">OOPS - Understanding `this`</h2>
                 <h3 class="text-3xl font-semibold mb-6">The Dynamic Nature of `this`</h3>
                 <p class="text-lg mb-4">The `this` keyword is a cornerstone of JavaScript OOP. Its value is not fixed; it depends entirely on <b>how the function is called</b>. Understanding this dynamic behavior is critical for building reliable classes and methods.</p>
@@ -108,8 +223,8 @@ showThis();
             </div>
 
             <!-- Slide 4: OOPS - `this` in Objects and Classes -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 4 of 20</p>
+            <div class="slide" data-title="OOPS - `this` in Objects">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 4 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">OOPS - `this` in Objects and Classes</h2>
                 <h3 class="text-3xl font-semibold mb-6">Context is Key</h3>
                 <p class="text-lg mb-4">In a test framework, you will most often encounter `this` within objects and classes. These are the most common contexts for organizing your code into reusable components like Page Object Models.</p>
@@ -140,8 +255,8 @@ console.log(loginPage.url); // Output: https://example.com/login
             </div>
 
             <!-- Slide 5: OOPS - Binding `this` -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 5 of 20</p>
+            <div class="slide" data-title="OOPS - Binding `this`">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 5 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">OOPS - Binding `this`</h2>
                 <h3 class="text-3xl font-semibold mb-6">Controlling Context with `bind()`</h3>
                 <p class="text-lg mb-4">Sometimes you need to explicitly control the value of `this`. The `.bind()` method is a powerful tool for this, allowing you to create a new function with a fixed `this` value, regardless of how it is later called. This is crucial for callbacks in test automation.</p>
@@ -166,8 +281,8 @@ console.log(getSelectorMethod()); // Output: #username
             </div>
 
             <!-- Slide 6: OOPS - Static Methods & Properties -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 6 of 20</p>
+            <div class="slide" data-title="OOPS - Static Methods">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 6 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">OOPS - Static Methods & Properties</h2>
                 <h3 class="text-3xl font-semibold mb-6">Creating a Shared Toolbox</h3>
                 <p class="text-lg mb-4">Static methods and properties are associated with the <b>class itself</b>, not with any specific instance. This means you can call them directly on the class without creating an object. They are perfect for creating shared utility functions.</p>
@@ -195,8 +310,8 @@ console.log(TestUtils.BASE_URL);
             </div>
 
             <!-- Slide 7: Design Patterns - The Factory Pattern -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 7 of 20</p>
+            <div class="slide" data-title="Factory Pattern">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 7 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">Design Patterns - The Factory Pattern</h2>
                 <h3 class="text-3xl font-semibold mb-6">Dynamically Creating Objects</h3>
                 <p class="text-lg mb-4">The <b>Factory Pattern</b> is a creational design pattern that provides an interface for creating objects, but allows the factory to decide which object to create. In QA, this is perfect for managing different types of test data or page objects.</p>
@@ -225,8 +340,8 @@ console.log(admin.role); // Output: admin
             </div>
 
             <!-- Slide 8: Design Patterns - The Singleton Pattern -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 8 of 20</p>
+            <div class="slide" data-title="Singleton Pattern">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 8 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">Design Patterns - The Singleton Pattern</h2>
                 <h3 class="text-3xl font-semibold mb-6">Ensuring a Single Instance</h3>
                 <p class="text-lg mb-4">The <b>Singleton Pattern</b> restricts a class to having only a single instance. This is highly useful for managing resources that should be globally shared and accessed by all tests, such as a browser driver or a database connection.</p>
@@ -258,8 +373,8 @@ console.log(manager1 === manager2); // Output: true
             </div>
 
             <!-- Slide 9: Async JavaScript - The Event Loop -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 9 of 20</p>
+            <div class="slide" data-title="Async - Event Loop">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 9 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">Async JavaScript - The Event Loop</h2>
                 <h3 class="text-3xl font-semibold mb-6">The Heart of Asynchronicity</h3>
                 <p class="text-lg mb-4">To write reliable tests, you must understand how JavaScript handles asynchronicity. The <b>Event Loop</b> is the constant process that allows JavaScript to perform non-blocking operations despite being single-threaded. It's the core reason why tests might be flaky if not properly synchronized.</p>
@@ -271,8 +386,8 @@ console.log(manager1 === manager2); // Output: true
             </div>
 
             <!-- Slide 10: Async JavaScript - Microtasks & Macrotasks -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 10 of 20</p>
+            <div class="slide" data-title="Async - Micro/Macrotasks">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 10 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">Async - Microtasks vs. Macrotasks</h2>
                 <h3 class="text-3xl font-semibold mb-6">Execution Order is Everything</h3>
                 <p class="text-lg mb-4">Asynchronous tasks are not all created equal. They are handled by different queues, and understanding their priority is key to preventing race conditions and test flakiness.</p>
@@ -301,8 +416,8 @@ console.log('4. End');
             </div>
 
             <!-- Slide 11: Async JavaScript - `Promise.all()` -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 11 of 20</p>
+            <div class="slide" data-title="Async - `Promise.all()`">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 11 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">Async - `Promise.all()`</h2>
                 <h3 class="text-3xl font-semibold mb-6">Running Tasks in Parallel</h3>
                 <p class="text-lg mb-4">In a professional framework, you need to perform multiple asynchronous actions in parallel to save time. `Promise.all()` is the perfect tool for this. It takes an array of promises and returns a single promise.</p>
@@ -333,8 +448,8 @@ runParallelFetches();
             </div>
 
             <!-- Slide 12: API Testing with `fetch` -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 12 of 20</p>
+            <div class="slide" data-title="API Testing - `fetch`">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 12 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">API Testing with `fetch`</h2>
                 <h3 class="text-3xl font-semibold mb-6">The Native Browser API</h3>
                 <p class="text-lg mb-4">Validating backend APIs directly is faster, more stable, and provides earlier feedback than UI tests. The `fetch` API is the native, built-in way to make HTTP requests in JavaScript, perfect for modern, minimalist code.</p>
@@ -360,8 +475,8 @@ async function getUserData(userId) {
             </div>
 
             <!-- Slide 13: API Testing with `axios` -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 13 of 20</p>
+            <div class="slide" data-title="API Testing - `axios`">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 13 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">API Testing with `axios`</h2>
                 <h3 class="text-3xl font-semibold mb-6">A Powerful Third-Party Library</h3>
                 <p class="text-lg mb-4">While `fetch` is great, `axios` is a popular third-party library that simplifies the process. It's often preferred in Node.js environments for its streamlined error handling and robust feature set, like interceptors.</p>
@@ -386,8 +501,8 @@ async function getUserData(userId) {
             </div>
 
             <!-- Slide 14: Module Systems - CommonJS vs. ESM -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 14 of 20</p>
+            <div class="slide" data-title="Module Systems">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 14 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">Module Systems</h2>
                 <h3 class="text-3xl font-semibold mb-6">CommonJS vs. ES Modules</h3>
                 <p class="text-lg mb-4">As your framework grows, you need to organize code into reusable modules. JavaScript has two main systems. Understanding the difference is crucial for project setup.</p>
@@ -407,8 +522,8 @@ const randomName = generateRandomString(8);
             </div>
 
             <!-- Slide 15: Test Data Management - Part 1 -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 15 of 20</p>
+            <div class="slide" data-title="Test Data Management - 1">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 15 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">Test Data Management - Part 1</h2>
                 <h3 class="text-3xl font-semibold mb-6">Fixtures and Environment Variables</h3>
                 <p class="text-lg mb-4">An advanced framework requires a sophisticated approach to test data. Poor data management leads to flaky tests and maintenance headaches. We'll explore two key strategies.</p>
@@ -419,8 +534,8 @@ const randomName = generateRandomString(8);
             </div>
 
             <!-- Slide 16: Test Data Management - Part 2 -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 16 of 20</p>
+            <div class="slide" data-title="Test Data Management - 2">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 16 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">Test Data Management - Part 2</h2>
                 <h3 class="text-3xl font-semibold mb-6">Factories and Database Integration</h3>
                 <p class="text-lg mb-4">For truly scalable frameworks, you need to be able to create and manage dynamic test data programmatically.</p>
@@ -431,8 +546,8 @@ const randomName = generateRandomString(8);
             </div>
 
             <!-- Slide 17: Professional Logging & Assertions -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 17 of 20</p>
+            <div class="slide" data-title="Professional Logging">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 17 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">Professional Logging</h2>
                 <h3 class="text-3xl font-semibold mb-6">Making Failures Informative</h3>
                 <p class="text-lg mb-4">A senior QA professional knows that tests will fail. The key is to make failures informative. A robust logging and assertion strategy is the difference between a flaky, confusing test suite and one that provides clear, actionable feedback.</p>
@@ -444,8 +559,8 @@ const randomName = generateRandomString(8);
             </div>
 
             <!-- Slide 18: Advanced Debugging -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 18 of 20</p>
+            <div class="slide" data-title="Advanced Debugging">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 18 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">Advanced Debugging</h2>
                 <h3 class="text-3xl font-semibold mb-6">Isolating Issues with Precision</h3>
                 <p class="text-lg mb-4">You've used basic breakpoints to pause your code, but what if a bug only occurs on the 100th iteration of a loop? A <b>conditional breakpoint</b> is a powerful tool that allows you to pause execution only when a specific JavaScript expression evaluates to `true`.</p>
@@ -456,8 +571,8 @@ const randomName = generateRandomString(8);
             </div>
 
             <!-- Slide 19: CI/CD Integration - Part 1 -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 19 of 20</p>
+            <div class="slide" data-title="CI/CD - Runners">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 19 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">CI/CD Integration - Part 1</h2>
                 <h3 class="text-3xl font-semibold mb-6">Runners and Commands</h3>
                 <p class="text-lg mb-4">A test automation framework is only truly valuable when it is integrated into a <b>Continuous Integration/Continuous Delivery (CI/CD)</b> pipeline. This means your tests run automatically whenever code is pushed to the repository.</p>
@@ -468,8 +583,8 @@ const randomName = generateRandomString(8);
             </div>
 
             <!-- Slide 20: CI/CD Integration - Part 2 -->
-            <div class="slide">
-                <p class="text-lg font-medium text-gray-500 mb-2">Slide 20 of 20</p>
+            <div class="slide" data-title="CI/CD - Reports">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 20 of 21</p>
                 <h2 class="text-4xl font-bold mb-4 text-blue-600">CI/CD Integration - Part 2</h2>
                 <h3 class="text-3xl font-semibold mb-6">Reporting and Headless Execution</h3>
                 <p class="text-lg mb-4">The final steps in a CI/CD pipeline are crucial for providing value back to the team. You need a way to see the results and ensure the tests run efficiently.</p>
@@ -479,11 +594,19 @@ const randomName = generateRandomString(8);
                 </ul>
             </div>
 
+            <!-- Slide 21: Thank You -->
+            <div class="slide" data-title="Thank You!">
+                <p class="text-lg font-medium text-gray-500 mb-2">Slide 21 of 21</p>
+                <h2 class="text-5xl font-bold text-center text-blue-600 mt-20">Thank You!</h2>
+                <p class="text-2xl text-center mt-6">This concludes the advanced JavaScript for QA course.</p>
+                <p class="text-xl text-center mt-4">We wish you the best of luck in building your next great test automation framework.</p>
+            </div>
+
         </div>
 
         <!-- Navigation Controls -->
         <div class="flex justify-between mt-8">
-            <button id="prev-btn" class="bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-full shadow-lg hover:bg-gray-400 transition-colors disabled:opacity-50" disabled>
+            <button id="prev-btn" class="bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-full shadow-lg hover:bg-gray-400 transition-colors disabled:opacity-50">
                 Previous
             </button>
             <button id="next-btn" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-full shadow-lg hover:bg-blue-700 transition-colors">
@@ -497,15 +620,54 @@ const randomName = generateRandomString(8);
             const slides = document.querySelectorAll('.slide');
             const prevBtn = document.getElementById('prev-btn');
             const nextBtn = document.getElementById('next-btn');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarNavList = document.getElementById('sidebar-nav-list');
+            const closeSidebarBtn = document.getElementById('toggle-sidebar-btn');
+            const openSidebarBtn = document.getElementById('hamburger-icon');
             let currentSlideIndex = 0;
+
+            // Dynamically create sidebar navigation links
+            slides.forEach((slide, index) => {
+                const title = slide.getAttribute('data-title');
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = `${index + 1}. ${title}`;
+                a.dataset.index = index;
+                li.appendChild(a);
+                sidebarNavList.appendChild(li);
+
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    currentSlideIndex = index;
+                    showSlide(currentSlideIndex);
+                    // Close the sidebar after a link is clicked
+                    sidebar.classList.remove('open');
+                });
+            });
+
+            const updateNavigation = () => {
+                prevBtn.disabled = currentSlideIndex === 0;
+                if (currentSlideIndex === slides.length - 1) {
+                    nextBtn.style.display = 'none';
+                } else {
+                    nextBtn.style.display = 'block';
+                }
+                updateSidebarLinks();
+            };
 
             const showSlide = (index) => {
                 slides.forEach((slide, i) => {
                     slide.classList.toggle('active', i === index);
                 });
+                updateNavigation();
+            };
 
-                prevBtn.disabled = index === 0;
-                nextBtn.disabled = index === slides.length - 1;
+            const updateSidebarLinks = () => {
+                const navLinks = sidebarNavList.querySelectorAll('a');
+                navLinks.forEach((link, index) => {
+                    link.classList.toggle('active-link', index === currentSlideIndex);
+                });
             };
 
             nextBtn.addEventListener('click', () => {
@@ -521,6 +683,21 @@ const randomName = generateRandomString(8);
                     showSlide(currentSlideIndex);
                 }
             });
+
+            // Sidebar open/close functionality
+            openSidebarBtn.addEventListener('click', () => {
+                sidebar.classList.add('open');
+            });
+
+            closeSidebarBtn.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+            });
+
+            // Added a fallback to ensure the first slide is visible on initial load
+            // This also handles cases where `DOMContentLoaded` might not fire as expected.
+            window.onload = () => {
+                showSlide(currentSlideIndex);
+            };
 
             showSlide(currentSlideIndex);
         });
